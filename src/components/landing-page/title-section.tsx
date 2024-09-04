@@ -5,7 +5,7 @@ interface TitleSectionProps {                           // prop type interface
   subheading?: string;
   pill: string;
 }
-
+ 
 const TitleSection: React.FC<TitleSectionProps> = ({
   title,
   subheading,

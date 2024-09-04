@@ -10,7 +10,7 @@ import { CLIENTS, PRICING_CARDS, PRICING_PLANS, USERS } from '@/lib/constants';
 import { randomUUID } from 'crypto';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
-import CustomCard from '@/components/landing-page/custom-card';
+import CustomCard from "@/components/landing-page/custom-card";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 
@@ -44,7 +44,7 @@ const HomePage = () => {
         "
         >
           <Button
-            variant="btn-secondary"
+            variant="secondary"                      /// btn-secondary
             className=" w-full
             rounded-[10px]
             p-6
@@ -351,8 +351,7 @@ const HomePage = () => {
                   <p className="dark:text-washed-purple-800">
                     {card.description}
                   </p>
-                  <Button
-                    variant="btn-primary"
+                  <Button                                       // button = btn-primary
                     className="whitespace-nowrap w-full mt-4"
                   >
                     {card.planType === PRICING_PLANS.proplan
@@ -397,3 +396,30 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+
+
+// TitleSection:
+
+// Location: @/components/landing-page/title-section
+// Usage: Displays a section title with a pill and subtitle.
+// Button:
+
+// Location: @/components/ui/button
+// Usage: A button component with different variants.
+// Image:
+
+// Location: next/image
+// Usage: Optimized image component for displaying images.
+// CustomCard:
+
+// Location: @/components/landing-page/custom-card
+// Usage: A customizable card component.
+// Avatar, AvatarFallback, AvatarImage:
+
+// Location: @/components/ui/avatar
+// Usage: Components for displaying user avatars.
+// CardContent, CardDescription, CardTitle:
+
+// Location: @/components/ui/card
+// Usage: Components used within the CustomCard for displaying card content, description, and title.
