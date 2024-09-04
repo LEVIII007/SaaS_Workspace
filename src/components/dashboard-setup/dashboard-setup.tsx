@@ -14,15 +14,15 @@ import {
 import EmojiPicker from '../global/emoji-picker';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
-import { Subscription, workspace } from '@/lib/supabase/supabase.types';
+import { Subscription, workspace } from '../../lib/supabase/supabase.types';
 import { Button } from '../ui/button';
 import Loader from '../global/Loader';
-import { createWorkspace } from '@/lib/supabase/queries';
+import { createWorkspace } from '../../lib/supabase/queries';
 import { useToast } from '../ui/use-toast';
 import { useRouter } from 'next/navigation';
-import { useAppState } from '@/lib/providers/state-provider';
+import { useAppState } from '../../lib/providers/state-provider';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { CreateWorkspaceFormSchema } from '@/lib/types';
+import { CreateWorkspaceFormSchema } from '../../lib/types';
 import { z } from 'zod';
 
 interface DashboardSetupProps {
@@ -51,6 +51,9 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
       workspaceName: '',
     },
   });
+
+
+
 
   
 
@@ -153,3 +156,10 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
 };
 
 export default DashboardSetup;
+
+
+
+// INPUT FIELDS:
+
+// A text input for the workspace name.
+// A file input for the workspace logo.   (ONLY FOR PRO MEMEBERS)
