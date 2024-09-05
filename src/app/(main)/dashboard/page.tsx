@@ -16,7 +16,7 @@ const DashboardPage = async () => {
 
   if (!user) return;
 
-  const workspace = await db.query.workspaces.findFirst({                     // drizzle query to find a workspace with user id
+  const workspace = await db.query.workspace.findFirst({                     // drizzle query to find a workspace with user id
     where: (workspace, { eq }) => eq(workspace.workspaceOwner, user.id),
   });
 

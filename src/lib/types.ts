@@ -5,3 +5,9 @@ export const FormSchema = z.object({
     password : z.string().describe('password').min(6)
 });
 
+
+export const CreateWorkspaceFormSchema = z.object({
+    logo : z.any(),
+    workspaceName : z.string().min(1, "workspace name must be atleast 1 character").describe('Workspace Name')
+});
+
