@@ -9,6 +9,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { prices, subscriptionStatus } from '../../../migrations/schema';
+import { users } from '../../../migrations/schema';
 // import { boolean } from 'drizzle-orm/mysql-core';
 // import { sql } from 'drizzle-orm';
 
@@ -121,8 +122,23 @@ export const folders = pgTable('folders', {
       mode: 'string',
     }).default(sql`now()`),
   });
+
+
+export const collaborators = pgTable('collaborators', {
+  workspaceId: uuid('workspace_id')
+  .notNull()
+  .references(() => workspace.id, {onDelete: 'cascade'}),
+  createdAt : timestamp('created_at', {
+    withTimezone: true,
+    mode: 'string',
+  }).defaultNow()
+  .notNull(),
+  userId : uuid('user_id').notNull().references(() => users.id, {onDelete: 'cascade'}), 
+}
+);
   
   
 
 
 
+ 
