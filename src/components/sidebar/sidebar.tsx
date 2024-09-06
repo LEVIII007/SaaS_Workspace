@@ -129,12 +129,12 @@ export default Sidebar;
 
 
 
-workspace
+// workspace
 
-sidebar :
+// sidebar :
 
-  plan usage  
-  native navigation
-  scroll area
-  folder dropdown list
+//   plan usage  
+//   native navigation
+//   scroll area
+//   folder dropdown list
   
