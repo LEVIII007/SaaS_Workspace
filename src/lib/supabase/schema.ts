@@ -125,6 +125,7 @@ export const folders = pgTable('folders', {
 
 
 export const collaborators = pgTable('collaborators', {
+  id: uuid('id').defaultRandom().primaryKey().notNull(),
   workspaceId: uuid('workspace_id')
   .notNull()
   .references(() => workspace.id, {onDelete: 'cascade'}),
