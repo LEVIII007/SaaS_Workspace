@@ -1,249 +1,164 @@
 'use client';
-import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
-import { User, Workspaces } from '@/lib/supabase/supabase.types';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
-import { Label } from '../ui/label';
-import { Input } from '../ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue, 
-} from '@/components/ui/select';
-import { SelectGroup } from '@radix-ui/react-select';
-import { Lock, Plus, Share } from 'lucide-react';
-import { Button } from '../ui/button';
-import { v4 } from 'uuid';
-import { addCollaborators, createWorkspace } from '@/lib/supabase/queries';
-import CollaboratorSearch from './collaborator-search';
-import { ScrollArea } from '../ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { useToast } from '@/hooks/use-toast';
+import { useAppState } from '@/lib/providers/state-provider';
+import { Workspaces } from '@/lib/supabase/supabase.types';
+import React, { useEffect, useState } from 'react';
+import SelectedWorkspace from './selected-workspace';
+import CustomDialogTrigger from '../global/custom-dialog-trigger';
+import WorkspaceCreator from '../global/workspace-creator';
 
-const WorkspaceCreator = () => {
-  const { user } = useSupabaseUser();
-  const { toast } = useToast();
-  const router = useRouter();
-  const [permissions, setPermissions] = useState('private');
-  const [title, setTitle] = useState('');
-  const [collaborators, setCollaborators] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+interface WorkspaceDropdownProps {
+  privateWorkspaces: Workspaces[] | [];
+  sharedWorkspaces: Workspaces[] | [];
+  collaboratingWorkspaces: Workspaces[] | [];
+  defaultValue: Workspaces | undefined;
+}
 
-  const addCollaborator = (user: User) => {
-    setCollaborators([...collaborators, user]);
-  };
+const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
+  privateWorkspaces,
+  collaboratingWorkspaces,
+  sharedWorkspaces,
+  defaultValue,
+}) => {
+  const { dispatch, state } = useAppState();
+  const [selectedOption, setSelectedOption] = useState(defaultValue);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const removeCollaborator = (user: User) => {
-    setCollaborators(collaborators.filter((c) => c.id !== user.id));
-  };
-
-  const createItem = async () => {
-    setIsLoading(true);
-    const uuid = v4();
-    if (user?.id) {
-      const newWorkspace: Workspaces = {
-        data: null,
-        createdAt: new Date().toISOString(),
-        iconId: '💼',
-        id: uuid,
-        inTrash: '',
-        title,
-        workspaceOwner: user.id,
-        logo: null,
-        bannerUrl: '',
-      };
-      if (permissions === 'private') {
-        toast({ title: 'Success', description: 'Created the Workspaces' });
-        await createWorkspace(newWorkspace);
-        router.refresh();
-      }
-      if (permissions === 'shared') {
-        toast({ title: 'Success', description: 'Created the Workspaces' });
-        await createWorkspace(newWorkspace);
-        await addCollaborators(collaborators, uuid);
-        router.refresh();
-      }
+  useEffect(() => {
+    if (!state.workspaces.length) {
+      dispatch({
+        type: 'SET_WORKSPACES',
+        payload: {
+          workspaces: [
+            ...privateWorkspaces,
+            ...sharedWorkspaces,
+            ...collaboratingWorkspaces,
+          ].map((Workspaces) => ({ ...Workspaces, folders: [] })),
+        },
+      });
     }
-    setIsLoading(false);
+  }, [privateWorkspaces, collaboratingWorkspaces, sharedWorkspaces]);
+
+  const handleSelect = (option: Workspaces) => {
+    setSelectedOption(option);
+    setIsOpen(false);
   };
+
+  useEffect(() => {
+    const findSelectedWorkspace = state.workspaces.find(
+      (Workspaces) => Workspaces.id === defaultValue?.id
+    );
+    if (findSelectedWorkspace) setSelectedOption(findSelectedWorkspace);
+  }, [state, defaultValue]);
 
   return (
-    <div className="flex gap-4 flex-col">
+    <div
+      className=" relative inline-block
+      text-left
+  "
+    >
       <div>
-        <Label
-          htmlFor="name"
-          className="text-sm text-muted-foreground"
-        >
-          Name
-        </Label>
-        <div
-          className="flex 
-        justify-center 
-        items-center 
-        gap-2
-        "
-        >
-          <Input
-            name="name"
-            value={title}
-            placeholder="Workspace Name"
-            onChange={(e) => {
-              setTitle(e.target.value);
-            }}
-          />
-        </div>
+        <span onClick={() => setIsOpen(!isOpen)}>
+          {selectedOption ? (
+            <SelectedWorkspace Workspaces={selectedOption} />
+          ) : (
+            'Select a Workspaces'
+          )}
+        </span>
       </div>
-      <>
-        <Label
-          htmlFor="permissions"
-          className="text-sm
-          text-muted-foreground"
+      {isOpen && (
+        <div
+          className="origin-top-right
+          absolute
+          w-full
+          rounded-md
+          shadow-md
+          z-50
+          h-[190px]
+          bg-black/10
+          backdrop-blur-lg
+          group
+          overflow-scroll
+          border-[1px]
+          border-muted
+      "
         >
-          Permission
-        </Label>
-        <Select
-          onValueChange={(val) => {
-            setPermissions(val);
-          }}
-          defaultValue={permissions}
-        >
-          <SelectTrigger className="w-full h-26 -mt-3">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="private">
-                <div
-                  className="p-2
-                  flex
-                  gap-4
-                  justify-center
-                  items-center
-                "
-                >
-                  <Lock />
-                  <article className="text-left flex flex-col">
-                    <span>Private</span>
-                    <p>
-                      Your Workspaces is private to you. You can choose to share
-                      it later.
-                    </p>
-                  </article>
-                </div>
-              </SelectItem>
-              <SelectItem value="shared">
-                <div className="p-2 flex gap-4 justify-center items-center">
-                  <Share></Share>
-                  <article className="text-left flex flex-col">
-                    <span>Shared</span>
-                    <span>You can invite collaborators.</span>
-                  </article>
-                </div>
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </>
-      {permissions === 'shared' && (
-        <div>
-          <CollaboratorSearch
-            existingCollaborators={collaborators}
-            getCollaborator={(user) => {
-              addCollaborator(user);
-            }}
-          >
-            <Button
-              type="button"
-              className="text-sm mt-4"
-            >
-              <Plus />
-              Add Collaborators
-            </Button>
-          </CollaboratorSearch>
-          <div className="mt-4">
-            <span className="text-sm text-muted-foreground">
-              Collaborators {collaborators.length || ''}
-            </span>
-            <ScrollArea
-              className="
-            h-[120px]
-            overflow-y-scroll
-            w-full
-            rounded-md
-            border
-            border-muted-foreground/20"
-            >
-              {collaborators.length ? (
-                collaborators.map((c) => (
-                  <div
-                    className="p-4 flex
-                      justify-between
-                      items-center
-                "
-                    key={c.id}
-                  >
-                    <div className="flex gap-4 items-center">
-                      <Avatar>
-                        <AvatarImage src="/avatars/7.png" />
-                        <AvatarFallback>PJ</AvatarFallback>
-                      </Avatar>
-                      <div
-                        className="text-sm 
-                          gap-2
-                          text-muted-foreground
-                          overflow-hidden
-                          overflow-ellipsis
-                          sm:w-[300px]
-                          w-[140px]
-                        "
-                      >
-                        {c.email}
-                      </div>
-                    </div>
-                    <Button
-                      variant="secondary"
-                      onClick={() => removeCollaborator(c)}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))
-              ) : (
-                <div
-                  className="absolute
-                  right-0 left-0
-                  top-0
-                  bottom-0
-                  flex
-                  justify-center
-                  items-center
-                "
-                >
-                  <span className="text-muted-foreground text-sm">
-                    You have no collaborators
-                  </span>
-                </div>
+          <div className="rounded-md flex flex-col">
+            <div className="!p-2">
+              {!!privateWorkspaces.length && (
+                <>
+                  <p className="text-muted-foreground">Private</p>
+                  <hr></hr>
+                  {privateWorkspaces.map((option) => (
+                    <SelectedWorkspace
+                      key={option.id}
+                      Workspaces={option}
+                      onClick={handleSelect}
+                    />
+                  ))}
+                </>
               )}
-            </ScrollArea>
+              {!!sharedWorkspaces.length && (
+                <>
+                  <p className="text-muted-foreground">Shared</p>
+                  <hr />
+                  {sharedWorkspaces.map((option) => (
+                    <SelectedWorkspace
+                      key={option.id}
+                      Workspaces={option}
+                      onClick={handleSelect}
+                    />
+                  ))}
+                </>
+              )}
+              {!!collaboratingWorkspaces.length && (
+                <>
+                  <p className="text-muted-foreground">Collaborating</p>
+                  <hr />
+                  {collaboratingWorkspaces.map((option) => (
+                    <SelectedWorkspace
+                      key={option.id}
+                      Workspaces={option}
+                      onClick={handleSelect}
+                    />
+                  ))}
+                </>
+              )}
+            </div>
+            <CustomDialogTrigger
+              header="Create A Workspace"
+              content={<WorkspaceCreator />}
+              description="Workspaces give you the power to collaborate with others. You can change your workspace privacy settings after creating the workspace too."
+            >
+              <div
+                className="flex 
+              transition-all 
+              hover:bg-muted 
+              justify-center 
+              items-center 
+              gap-2 
+              p-2 
+              w-full"
+              >
+                <article
+                  className="text-slate-500 
+                rounded-full
+                 bg-slate-800 
+                 w-4 
+                 h-4 
+                 flex 
+                 items-center 
+                 justify-center"
+                >
+                  +
+                </article>
+                Create workspace
+              </div>
+            </CustomDialogTrigger>
           </div>
         </div>
       )}
-      <Button
-        type="button"
-        disabled={
-          !title ||
-          (permissions === 'shared' && collaborators.length === 0) ||
-          isLoading
-        }
-        variant={'secondary'}
-        onClick={createItem}
-      >
-        Create
-      </Button>
     </div>
   );
 };
 
-export default WorkspaceCreator;
+export default WorkspaceDropdown;
