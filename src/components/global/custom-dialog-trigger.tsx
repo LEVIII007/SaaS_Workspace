@@ -1,48 +1,48 @@
-import React from 'react'
-
+import React from 'react';
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-  } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"  
-import { StringValidation } from 'zod'
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import clsx from 'clsx';
 
-
-interface customdialogtriggerProps {
-      header? : String;
-      content? : React.ReactNode;
-      children? : React.ReactNode;
-      description? : string;
-      footer? : string;
-      className? : string;
-    }
-
-export const customdialogtrigger : React.FC<customdialogtriggerProps> = ({
-    header,
-    content,
-    children,
-    description,
-    footer,
-    className
-}) => {
-
-  return (                                      // so basically we have modieid the dialog trigger to make whole children into A dialog trigger. we will pass chilren into dialog trigger  
-    <Dialog>
-  <DialogTrigger>Open</DialogTrigger>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Are you absolutely sure?</DialogTitle>
-      <DialogDescription>
-        This action cannot be undone. This will permanently delete your account
-        and remove your data from our servers.
-      </DialogDescription>
-    </DialogHeader>
-  </DialogContent>
-</Dialog>
-
-  )
+interface CustomDialogTriggerProps {
+  header?: string;
+  content?: React.ReactNode;
+  children: React.ReactNode;
+  description?: string;
+  className?: string;
 }
+
+const CustomDialogTrigger: React.FC<CustomDialogTriggerProps> = ({              // so basically this is a custom dialog trigger
+  header,
+  content,
+  children,
+  description,
+  className,
+}) => {
+  return (
+    <Dialog>
+      <DialogTrigger className={clsx('', className)}>{children}</DialogTrigger>
+      <DialogContent
+        className="h-screen
+        block
+        sm:h-[440px]
+        overflow-scroll
+        w-full
+      "
+      >
+        <DialogHeader>
+          <DialogTitle>{header}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        {content}
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default CustomDialogTrigger;
