@@ -48,7 +48,7 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
       (workspace) => workspace.id === defaultValue?.id
     );
     if (findSelectedWorkspace) setSelectedOption(findSelectedWorkspace);
-  }, [state, defaultValue]);
+  }, [state, defaultValue]); 
 
   return (
     <div

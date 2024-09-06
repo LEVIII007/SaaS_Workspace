@@ -11,7 +11,7 @@ import {
 } from '@/lib/supabase/queries';
 import { redirect } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
-import WorkspaceDropdown from './workspace-dropdown';
+import WorkspaceDropdown from './workspace_dropdown';
 import PlanUsage from './plan-usage';
 import NativeNavigation from './native-navigation';
 import { ScrollArea } from '../ui/scroll-area';
