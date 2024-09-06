@@ -340,15 +340,3 @@ export const getUsersFromSearch = async (email: string) => {
     .where(ilike(users.email, `${email}%`));
   return accounts;
 };
-
-
-
-const AddCollaborators = async (workspaceId : string, users : User[]) => {
-  if(!workspaceId) return [];
-
-  const response = users.forEach(async (user : User) => {
-    const userExists = await db.query.collaborators.findFirst({
-      where : (u, { eq }) => and(eq(u.userId, user.id), eq(u.workspaceId, workspaceId))
-    });
-
-}
