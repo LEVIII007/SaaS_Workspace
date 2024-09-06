@@ -84,7 +84,7 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
         >
           <div className="rounded-md flex flex-col">
             <div className="!p-2">
-              {!!privateWorkspaces.length && (
+              {!!privateWorkspaces.length && (              //conditionally renders a section for private workspaces 
                 <>
                   <p className="text-muted-foreground">Private</p>
                   <hr></hr>

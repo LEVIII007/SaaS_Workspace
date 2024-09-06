@@ -43,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
   //error
   if (subscriptionError || foldersError) redirect('/dashboard');
 
-  const [privateWorkspaces, collaboratingWorkspaces, sharedWorkspaces] =
+  const [privateWorkspaces, collaboratingWorkspaces, sharedWorkspaces] =            // get all the different workspaces private collaborating shared
     await Promise.all([
       getPrivateWorkspaces(user.id),
       getCollaboratingWorkspaces(user.id),
@@ -59,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
       )}
     >
       <div>
-        <WorkspaceDropdown
+        <WorkspaceDropdown                                // side bar dropdown for each type of workspace
           privateWorkspaces={privateWorkspaces}
           sharedWorkspaces={sharedWorkspaces}
           collaboratingWorkspaces={collaboratingWorkspaces}
@@ -69,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
             ...sharedWorkspaces,
           ].find((workspace) => workspace.id === params.workspaceId)}
         />
-        <PlanUsage
+        <PlanUsage                                                // it will only show the plan usage if the user has a subscription or free user will only have 3 workspaces
           foldersLength={workspaceFolderData?.length || 0}
           subscription={subscriptionData}
         />
