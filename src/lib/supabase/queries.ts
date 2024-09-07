@@ -239,7 +239,7 @@ export const getActiveProductsWithPrice = async () => {
 
       with: {
         prices: {
-          where: (prices : { eq }) => eq(prices.active, true),
+          where: (pri, { eq }) => eq(pri.active, true),
         },
       },
     });
