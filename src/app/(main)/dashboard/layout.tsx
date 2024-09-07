@@ -1,5 +1,5 @@
 // import { SubscriptionModalProvider } from '@/lib/providers/subscription-modal-provider';
-import { getActiveProductsWithPrice } from '@/lib/supabase/queries';
+// import { getActiveProductsWithPrice } from '@/lib/supabase/queries';
 import React from 'react';
 
 interface LayoutProps {
