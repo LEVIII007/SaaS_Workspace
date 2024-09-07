@@ -76,7 +76,7 @@ type Action =                                             // The Action type is 
 
 const initialState: AppState = { workspaces: [] };
 
-const appReducer = (
+const appReducer = (                    // appReducer function that takes the current state and an action and returns a new state based on the action type.
   state: AppState = initialState,
   action: Action
 ): AppState => {
@@ -278,7 +278,7 @@ const appReducer = (
   }
 };
 
-const AppStateContext = createContext<     // what is it doing?
+const AppStateContext = createContext<     // what is it doing?  
   | {
       state: AppState;
       dispatch: Dispatch<Action>;
@@ -294,10 +294,10 @@ interface AppStateProviderProps {
 }
 
 const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
-  const [state, dispatch] = useReducer(appReducer, initialState);
+  const [state, dispatch] = useReducer(appReducer, initialState);                    // useReducer hook to create a state management context that will manage the state of the application.
   const pathname = usePathname();
 
-  const workspaceId = useMemo(() => {
+  const workspaceId = useMemo(() => {                            // to get the workspaceId from the URL
     const urlSegments = pathname?.split('/').filter(Boolean);
     if (urlSegments)
       if (urlSegments.length > 1) {
@@ -305,7 +305,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
       }
   }, [pathname]);
 
-  const folderId = useMemo(() => {
+  const folderId = useMemo(() => {                        // to get the folderId from the URL
     const urlSegments = pathname?.split('/').filter(Boolean);
     if (urlSegments)
       if (urlSegments?.length > 2) {
@@ -313,7 +313,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
       }
   }, [pathname]);
 
-  const fileId = useMemo(() => {
+  const fileId = useMemo(() => {                                  // to get the fileId from the URL
     const urlSegments = pathname?.split('/').filter(Boolean);
     if (urlSegments)
       if (urlSegments?.length > 3) {

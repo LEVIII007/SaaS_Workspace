@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import CypressHomeIcon from '../icons/cypressHomeIcon';
 import CypressSettingsIcon from '../icons/cypressSettingsIcon';
 import CypressTrashIcon from '../icons/cypressTrashIcon';
+import { Settings, Trash } from 'lucide-react';
 // import Settings from '../settings/settings';
 // import Trash from '../trash/trash';
 
@@ -68,3 +69,9 @@ const NativeNavigation: React.FC<NativeNavigationProps> = ({
 };
 
 export default NativeNavigation;
+
+
+// this is just for the sidebar navigation :
+// Trash
+// Settings
+// myworkspace
