@@ -7,8 +7,8 @@ import { ThemeProvider } from '@/lib/providers/next-theme-provider';
 import { DM_Sans } from 'next/font/google';
 import { twMerge } from 'tailwind-merge';
 console.log('hello')
-// import AppStateProvider from '@/lib/providers/state-provider';
-// import { SupabaseUserProvider } from '@/lib/providers/supabase-user-provider';
+import AppStateProvider from '@/lib/providers/state-provider';
+import { SupabaseUserProvider } from '@/lib/providers/supabase-user-provider';
 // import { Toaster } from '@/components/ui/toaster';
 // import { SocketProvider } from '@/lib/providers/socket-provider';
 
@@ -32,14 +32,14 @@ export default function RootLayout({
           defaultTheme="dark"
           enableSystem
         >
-          {/* <AppStateProvider>
+          <AppStateProvider>
             <SupabaseUserProvider>
-              <SocketProvider> */}
+              {/* <SocketProvider> */}
                 {children}
-                {/* <Toaster />
-              </SocketProvider>
-            </SupabaseUserProvider>
-          </AppStateProvider> */}
+                {/* <Toaster /> */}
+               {/* </SocketProvider> */}
+             </SupabaseUserProvider>
+           </AppStateProvider>
         </ThemeProvider>
       </body>
     </html>
