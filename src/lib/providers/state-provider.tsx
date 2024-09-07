@@ -13,15 +13,15 @@ import { usePathname } from 'next/navigation';
 import { getFiles } from '../supabase/queries';
 
 export type appFoldersType = Folder & { files: File[] | [] };
-export type appWorkspacesType = Workspaces & {                 // workspace have files, folders
+export type appWorkspacesType = Workspaces & {
   folders: appFoldersType[] | [];
 };
 
 interface AppState {
-  workspaces: appWorkspacesType[] | [];                        // an AppState interface that defines the shape of the state object that will be managed by the appReducer function.
+  workspaces: appWorkspacesType[] | [];
 }
 
-type Action =                                             // The Action type is a TypeScript union type that defines the possible actions that can be dispatched in a state management context,
+type Action =
   | { type: 'ADD_WORKSPACE'; payload: appWorkspacesType }
   | { type: 'DELETE_WORKSPACE'; payload: string }
   | {
@@ -76,7 +76,7 @@ type Action =                                             // The Action type is 
 
 const initialState: AppState = { workspaces: [] };
 
-const appReducer = (                    // appReducer function that takes the current state and an action and returns a new state based on the action type.
+const appReducer = (
   state: AppState = initialState,
   action: Action
 ): AppState => {
@@ -278,7 +278,7 @@ const appReducer = (                    // appReducer function that takes the cu
   }
 };
 
-const AppStateContext = createContext<     // what is it doing?  
+const AppStateContext = createContext<
   | {
       state: AppState;
       dispatch: Dispatch<Action>;
@@ -294,10 +294,10 @@ interface AppStateProviderProps {
 }
 
 const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
-  const [state, dispatch] = useReducer(appReducer, initialState);                    // useReducer hook to create a state management context that will manage the state of the application.
+  const [state, dispatch] = useReducer(appReducer, initialState);
   const pathname = usePathname();
 
-  const workspaceId = useMemo(() => {                            // to get the workspaceId from the URL
+  const workspaceId = useMemo(() => {
     const urlSegments = pathname?.split('/').filter(Boolean);
     if (urlSegments)
       if (urlSegments.length > 1) {
@@ -305,7 +305,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
       }
   }, [pathname]);
 
-  const folderId = useMemo(() => {                        // to get the folderId from the URL
+  const folderId = useMemo(() => {
     const urlSegments = pathname?.split('/').filter(Boolean);
     if (urlSegments)
       if (urlSegments?.length > 2) {
@@ -313,7 +313,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
       }
   }, [pathname]);
 
-  const fileId = useMemo(() => {                                  // to get the fileId from the URL
+  const fileId = useMemo(() => {
     const urlSegments = pathname?.split('/').filter(Boolean);
     if (urlSegments)
       if (urlSegments?.length > 3) {
