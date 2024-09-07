@@ -59,7 +59,7 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
       <div>
         <span onClick={() => setIsOpen(!isOpen)}>
           {selectedOption ? (
-            <SelectedWorkspace Workspaces={selectedOption} />
+            <SelectedWorkspace workspace ={selectedOption} />
           ) : (
             'Select a Workspaces'
           )}
@@ -91,7 +91,7 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
                   {privateWorkspaces.map((option) => (
                     <SelectedWorkspace
                       key={option.id}
-                      Workspaces={option}
+                      workspace={option}
                       onClick={handleSelect}
                     />
                   ))}
@@ -104,7 +104,7 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
                   {sharedWorkspaces.map((option) => (
                     <SelectedWorkspace
                       key={option.id}
-                      Workspaces={option}
+                      workspace={option}
                       onClick={handleSelect}
                     />
                   ))}
@@ -117,7 +117,7 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
                   {collaboratingWorkspaces.map((option) => (
                     <SelectedWorkspace
                       key={option.id}
-                      Workspaces={option}
+                      workspace={option}
                       onClick={handleSelect}
                     />
                   ))}
