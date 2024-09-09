@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAppState } from '@/lib/providers/state-provider';
-import { User, workspace } from '@/lib/supabase/supabase.types';
+import { User, Workspaces } from '@/lib/supabase/supabase.types';
 import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -55,7 +55,7 @@ import { Alert, AlertDescription } from '../ui/alert';
 import CypressProfileIcon from '../icons/cypressProfileIcon';
 import LogoutButton from '../global/logout-button';
 import Link from 'next/link';
-import { useSubscriptionModal } from '@/lib/providers/subscription-modal-provider';
+import { useSubscriptionModal } from '@/lib/providers/subscription-model-provider';
 import { postData } from '@/lib/utils';
 
 const SettingsForm = () => {
@@ -68,13 +68,47 @@ const SettingsForm = () => {
   const [permissions, setPermissions] = useState('private');
   const [collaborators, setCollaborators] = useState<User[] | []>([]);
   const [openAlertMessage, setOpenAlertMessage] = useState(false);
-  const [workspaceDetails, setWorkspaceDetails] = useState<workspace>();
+  const [workspaceDetails, setWorkspaceDetails] = useState<Workspaces>();
   const titleTimerRef = useRef<ReturnType<typeof setTimeout>>();                        // ref to create a timer for title input. debounce
 
   // loading states
   const [uploadingProfilePic, setUploadingProfilePic] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [loadingPortal, setLoadingPortal] = useState(false);
+
+
+  // add collaborators
+  // remove collaborators
+  // on change workspace title
+  // on click alerts
+  // fetching details (avatar, logo, collaborators, title, permissions)
+  // get workspace detials
+  // get all the collaborators
+  // portal for stripe or razorpay redirect
+
+
+  const workspaceNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!workspaceId || !e.target.value) return;
+    dispatch({
+      type: 'UPDATE_WORKSPACE',
+      payload: { Workspaces: { title: e.target.value }, workspaceId },
+    });
+    if (titleTimerRef.current) clearTimeout(titleTimerRef.current);
+    titleTimerRef.current = setTimeout(async () => {
+      // await updateWorkspace({ title: e.target.value }, workspaceId);
+    }, 500);
+  };
+
+
+
+
+
+
+
+
+
+
+
 
 
 
