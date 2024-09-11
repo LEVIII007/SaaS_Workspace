@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAppState } from '@/lib/providers/state-provider';
-import { User, Workspaces } from '@/lib/supabase/supabase.types';
+import { User, workspace } from '@/lib/supabase/supabase.types';
 import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -68,7 +68,7 @@ const SettingsForm = () => {
   const [permissions, setPermissions] = useState('private');
   const [collaborators, setCollaborators] = useState<User[] | []>([]);
   const [openAlertMessage, setOpenAlertMessage] = useState(false);
-  const [workspaceDetails, setWorkspaceDetails] = useState<Workspaces>();
+  const [workspaceDetails, setWorkspaceDetails] = useState<workspace>();
   const titleTimerRef = useRef<ReturnType<typeof setTimeout>>();                        // ref to create a timer for title input. debounce
 
   // loading states

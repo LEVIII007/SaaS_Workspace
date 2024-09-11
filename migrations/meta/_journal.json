@@ -29,6 +29,13 @@
       "when": 1725643816352,
       "tag": "0003_safe_rattler",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1725899431398,
+      "tag": "0004_loving_tombstone",
+      "breakpoints": true
     }
   ]
 }

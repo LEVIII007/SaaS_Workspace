@@ -6,7 +6,7 @@ import {
   products,
   subscriptions,
   users,
-  workspace,
+  workspaces,
 } from '../../../migrations/schema';
 import { files } from './schema';
 
@@ -417,7 +417,7 @@ export interface Database {
   };
 }
 
-export type Workspaces = InferSelectModel<typeof workspace>;
+export type workspace = InferSelectModel<typeof workspaces>;
 export type User = InferSelectModel<typeof users>;
 export type Folder = InferSelectModel<typeof folders>;
 export type File = InferSelectModel<typeof files>;
