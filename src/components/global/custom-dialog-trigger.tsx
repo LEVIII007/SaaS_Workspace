@@ -17,7 +17,7 @@ interface CustomDialogTriggerProps {
   className?: string;
 }
 
-const CustomDialogTrigger: React.FC<CustomDialogTriggerProps> = ({              // so basically this is a custom dialog trigger
+const CustomDialogTrigger: React.FC<CustomDialogTriggerProps> = ({
   header,
   content,
   children,

@@ -1,16 +1,16 @@
 'use client';
 import { useAppState } from '@/lib/providers/state-provider';
-import { Workspaces } from '@/lib/supabase/supabase.types';
+import { workspace } from '@/lib/supabase/supabase.types';
 import React, { useEffect, useState } from 'react';
 import SelectedWorkspace from './selected-workspace';
 import CustomDialogTrigger from '../global/custom-dialog-trigger';
 import WorkspaceCreator from '../global/workspace-creator';
 
 interface WorkspaceDropdownProps {
-  privateWorkspaces: Workspaces[] | [];
-  sharedWorkspaces: Workspaces[] | [];
-  collaboratingWorkspaces: Workspaces[] | [];
-  defaultValue: Workspaces | undefined;
+  privateWorkspaces: workspace[] | [];
+  sharedWorkspaces: workspace[] | [];
+  collaboratingWorkspaces: workspace[] | [];
+  defaultValue: workspace | undefined;
 }
 
 const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
@@ -32,20 +32,20 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
             ...privateWorkspaces,
             ...sharedWorkspaces,
             ...collaboratingWorkspaces,
-          ].map((Workspaces) => ({ ...Workspaces, folders: [] })),
+          ].map((workspace) => ({ ...workspace, folders: [] })),
         },
       });
     }
   }, [privateWorkspaces, collaboratingWorkspaces, sharedWorkspaces]);
 
-  const handleSelect = (option: Workspaces) => {
+  const handleSelect = (option: workspace) => {
     setSelectedOption(option);
     setIsOpen(false);
   };
 
   useEffect(() => {
     const findSelectedWorkspace = state.workspaces.find(
-      (Workspaces) => Workspaces.id === defaultValue?.id
+      (workspace) => workspace.id === defaultValue?.id
     );
     if (findSelectedWorkspace) setSelectedOption(findSelectedWorkspace);
   }, [state, defaultValue]);
@@ -59,9 +59,9 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
       <div>
         <span onClick={() => setIsOpen(!isOpen)}>
           {selectedOption ? (
-            <SelectedWorkspace workspace ={selectedOption} />
+            <SelectedWorkspace workspace={selectedOption} />
           ) : (
-            'Select a Workspaces'
+            'Select a workspace'
           )}
         </span>
       </div>

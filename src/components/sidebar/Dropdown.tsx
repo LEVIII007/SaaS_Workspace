@@ -11,7 +11,7 @@ import {
 import clsx from 'clsx';
 import EmojiPicker from '../global/emoji-picker';
 import { createFile, updateFile, updateFolder } from '@/lib/supabase/queries';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '../ui/use-toast';
 import TooltipComponent from '../global/tooltip-component';
 import { PlusIcon, Trash } from 'lucide-react';
 import { File } from '@/lib/supabase/supabase.types';

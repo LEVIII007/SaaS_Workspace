@@ -14,11 +14,11 @@ import {
 import EmojiPicker from '../global/emoji-picker';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
-import { Subscription, Workspaces } from '@/lib/supabase/supabase.types';
+import { Subscription, workspace } from '@/lib/supabase/supabase.types';
 import { Button } from '../ui/button';
 import Loader from '../global/Loader';
 import { createWorkspace } from '@/lib/supabase/queries';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '../ui/use-toast';
 import { useRouter } from 'next/navigation';
 import { useAppState } from '@/lib/providers/state-provider';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -79,7 +79,7 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
       }
     }
     try {
-      const newWorkspace: Workspaces = {
+      const newWorkspace: workspace = {
         data: null,
         createdAt: new Date().toISOString(),
         iconId: selectedEmoji,

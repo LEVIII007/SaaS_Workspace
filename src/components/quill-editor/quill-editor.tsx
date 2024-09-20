@@ -81,10 +81,9 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   >([]);
   const [deletingBanner, setDeletingBanner] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [localCursors, setLocalCursors] = useState<any>([]);    // used to store the local cursors
+  const [localCursors, setLocalCursors] = useState<any>([]);
 
-  const details = useMemo(() => {                        // used to get the details of the file/folder/workspace
-    console.log('🔵[DEBUG] Calculating details for dirType:', dirType);
+  const details = useMemo(() => {             // initially data will be setup what we have on server
     let selectedDir;
     if (dirType === 'file') {
       selectedDir = state.workspaces
@@ -104,11 +103,9 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     }
 
     if (selectedDir) {
-      console.log('🔵[DEBUG] Selected directory found:', selectedDir);
       return selectedDir;
     }
 
-    console.log('🔵[DEBUG] Using dirDetails as fallback:', dirDetails);
     return {
       title: dirDetails.title,
       iconId: dirDetails.iconId,
@@ -117,10 +114,21 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       inTrash: dirDetails.inTrash,
       bannerUrl: dirDetails.bannerUrl,
     } as workspace | Folder | File;
-  }, [state, workspaceId, folderId]);
+  }, [
+    state,
+    workspaceId,
+    folderId,
+    dirDetails.bannerUrl,
+    dirDetails.createdAt,
+    dirDetails.data,
+    dirDetails.iconId,
+    dirDetails.inTrash,
+    dirDetails.title,
+    dirType,
+    fileId,
+  ]);
 
-  const breadCrumbs = useMemo(() => {               // used to calculate the breadcrumbs for the file/folder/workspace
-    console.log('🔵[DEBUG] Calculating breadcrumbs for pathname:', pathname);
+  const breadCrumbs = useMemo(() => {
     if (!pathname || !state.workspaces || !workspaceId) return;
     const segments = pathname
       .split('/')
@@ -157,10 +165,9 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 
     return `${workspaceBreadCrumb} ${folderBreadCrumb} ${fileBreadCrumb}`;
   }, [state, pathname, workspaceId]);
-  
 
-  const wrapperRef = useCallback(async (wrapper: any) => {    // used to initialize the quill editor
-    console.log('🔵[DEBUG] Initializing Quill editor');
+  //
+  const wrapperRef = useCallback(async (wrapper: any) => {
     if (typeof window !== 'undefined') {
       if (wrapper === null) return;
       wrapper.innerHTML = '';
@@ -178,13 +185,11 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
           },
         },
       });
-      console.log('🔵[DEBUG] Quill editor initialized');
       setQuill(q);
     }
   }, []);
 
   const restoreFileHandler = async () => {
-    console.log('🔵[DEBUG] Restoring file/folder for dirType:', dirType);
     if (dirType === 'file') {
       if (!folderId || !workspaceId) return;
       dispatch({
@@ -192,7 +197,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         payload: { file: { inTrash: '' }, fileId, folderId, workspaceId },
       });
       await updateFile({ inTrash: '' }, fileId);
-      console.log('🔵[DEBUG] File restored:', fileId);
     }
     if (dirType === 'folder') {
       if (!workspaceId) return;
@@ -201,16 +205,12 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         payload: { folder: { inTrash: '' }, folderId: fileId, workspaceId },
       });
       await updateFolder({ inTrash: '' }, fileId);
-      console.log('🔵[DEBUG] Folder restored:', fileId);
     }
   };
 
-  
   const deleteFileHandler = async () => {
-    console.log('🔵[DEBUG] deleteFileHandler called with dirType:', dirType);
     if (dirType === 'file') {
       if (!folderId || !workspaceId) return;
-      console.log('🔵[DEBUG] Deleting file with ID:', fileId);
       dispatch({
         type: 'DELETE_FILE',
         payload: { fileId, folderId, workspaceId },
@@ -220,7 +220,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     }
     if (dirType === 'folder') {
       if (!workspaceId) return;
-      console.log('🔵[DEBUG] Deleting folder with ID:', fileId);
       dispatch({
         type: 'DELETE_FOLDER',
         payload: { folderId: fileId, workspaceId },
@@ -229,12 +228,10 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       router.replace(`/dashboard/${workspaceId}`);
     }
   };
-  
+
   const iconOnChange = async (icon: string) => {
-    console.log('🔵[DEBUG] iconOnChange called with icon:', icon);
     if (!fileId) return;
     if (dirType === 'workspace') {
-      console.log('🔵[DEBUG] Updating workspace icon with ID:', fileId);
       dispatch({
         type: 'UPDATE_WORKSPACE',
         payload: { workspace: { iconId: icon }, workspaceId: fileId },
@@ -243,7 +240,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     }
     if (dirType === 'folder') {
       if (!workspaceId) return;
-      console.log('🔵[DEBUG] Updating folder icon with ID:', fileId);
       dispatch({
         type: 'UPDATE_FOLDER',
         payload: {
@@ -256,7 +252,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     }
     if (dirType === 'file') {
       if (!workspaceId || !folderId) return;
-      console.log('🔵[DEBUG] Updating file icon with ID:', fileId);
+
       dispatch({
         type: 'UPDATE_FILE',
         payload: { file: { iconId: icon }, workspaceId, folderId, fileId },
@@ -264,14 +260,12 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       await updateFile({ iconId: icon }, fileId);
     }
   };
-  
+
   const deleteBanner = async () => {
-    console.log('🔵[DEBUG] deleteBanner called with dirType:', dirType);
     if (!fileId) return;
     setDeletingBanner(true);
     if (dirType === 'file') {
       if (!folderId || !workspaceId) return;
-      console.log('🔵[DEBUG] Deleting banner for file with ID:', fileId);
       dispatch({
         type: 'UPDATE_FILE',
         payload: { file: { bannerUrl: '' }, fileId, folderId, workspaceId },
@@ -281,7 +275,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     }
     if (dirType === 'folder') {
       if (!workspaceId) return;
-      console.log('🔵[DEBUG] Deleting banner for folder with ID:', fileId);
       dispatch({
         type: 'UPDATE_FOLDER',
         payload: { folder: { bannerUrl: '' }, folderId: fileId, workspaceId },
@@ -290,7 +283,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       await updateFolder({ bannerUrl: '' }, fileId);
     }
     if (dirType === 'workspace') {
-      console.log('🔵[DEBUG] Deleting banner for workspace with ID:', fileId);
       dispatch({
         type: 'UPDATE_WORKSPACE',
         payload: {
@@ -303,21 +295,18 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     }
     setDeletingBanner(false);
   };
-  
-  useEffect(() => {
-    console.log('🔵[DEBUG] useEffect for fetching information called with fileId:', fileId);
+
+  useEffect(() => {        // fetch file/folder/workspace details from server and set them in  quill editor
     if (!fileId) return;
     let selectedDir;
     const fetchInformation = async () => {
-      if (dirType === 'file') {
-        console.log('🔵[DEBUG] Fetching file details for fileId:', fileId);
+      if (dirType === 'file') {                                 // if file is selected then fetch file details
         const { data: selectedDir, error } = await getFileDetails(fileId);
-        if (error || !selectedDir) {
-          console.log('🔴[DEBUG] Error fetching file details:', error);
+        if (error || !selectedDir) {                             // if error or no data found then redirect to dashboard
           return router.replace('/dashboard');
         }
-  
-        if (!selectedDir[0]) {
+
+        if (!selectedDir[0]) {                                  // if no file found then redirect to workspace page
           if (!workspaceId) return;
           return router.replace(`/dashboard/${workspaceId}`);
         }
@@ -335,13 +324,11 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         });
       }
       if (dirType === 'folder') {
-        console.log('🔵[DEBUG] Fetching folder details for fileId:', fileId);
         const { data: selectedDir, error } = await getFolderDetails(fileId);
         if (error || !selectedDir) {
-          console.log('🔴[DEBUG] Error fetching folder details:', error);
           return router.replace('/dashboard');
         }
-  
+
         if (!selectedDir[0]) {
           router.replace(`/dashboard/${workspaceId}`);
         }
@@ -358,10 +345,8 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         });
       }
       if (dirType === 'workspace') {
-        console.log('🔵[DEBUG] Fetching workspace details for fileId:', fileId);
         const { data: selectedDir, error } = await getWorkspaceDetails(fileId);
         if (error || !selectedDir) {
-          console.log('🔴[DEBUG] Error fetching workspace details:', error);
           return router.replace('/dashboard');
         }
         if (!selectedDir[0] || quill === null) return;
@@ -377,19 +362,20 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       }
     };
     fetchInformation();
-  }, [fileId, workspaceId, quill, dirType]);
-  
+  }, [fileId, workspaceId, quill, dirType, dispatch, router]);
+
+
+
   useEffect(() => {
-    console.log('🔵[DEBUG] useEffect for socket cursor move called with fileId:', fileId);
     if (quill === null || socket === null || !fileId || !localCursors.length)
       return;
+
     const socketHandler = (range: any, roomId: string, cursorId: string) => {
       if (roomId === fileId) {
         const cursorToMove = localCursors.find(
           (c: any) => c.cursors()?.[0].id === cursorId
         );
         if (cursorToMove) {
-          console.log('🔵[DEBUG] Moving cursor for cursorId:', cursorId);
           cursorToMove.moveCursor(cursorId, range);
         }
       }
@@ -400,11 +386,14 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     };
   }, [quill, socket, fileId, localCursors]);
 
+
   //rooms
   useEffect(() => {
     if (socket === null || quill === null || !fileId) return;
     socket.emit('create-room', fileId);
   }, [socket, quill, fileId]);
+
+
 
   //Send quill changes to all clients
   useEffect(() => {
@@ -418,8 +407,8 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       };
     };
     const quillHandler = (delta: any, oldDelta: any, source: any) => {
-      if (source !== 'user') return;
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      if (source !== 'user') return; 
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);         // debouncing changes to save
       setSaving(true);
       const contents = quill.getContents();
       const quillLength = quill.getLength();
@@ -465,16 +454,18 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       }, 850);
       socket.emit('send-changes', delta, fileId);
     };
-    quill.on('text-change', quillHandler);
+    quill.on('text-change', quillHandler);                      // listen to text change and selection change
     quill.on('selection-change', selectionChangeHandler(user.id));
 
     return () => {
       quill.off('text-change', quillHandler);
       quill.off('selection-change', selectionChangeHandler);
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);    // clear timer
     };
-  }, [quill, socket, fileId, user, details, folderId, workspaceId, dispatch]);
+  }, [quill, socket, fileId, user, details, folderId, workspaceId, dirType, dispatch]);
 
+
+  // receiving changes from other clients
   useEffect(() => {
     if (quill === null || socket === null) return;
     const socketHandler = (deltas: any, id: string) => {
@@ -535,6 +526,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 
   return (
     <>
+    {isConnected ? "connected" : "disconnected"}
       <div className="relative">
         {details.inTrash && (
           <article

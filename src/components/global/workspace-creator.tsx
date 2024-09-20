@@ -1,6 +1,6 @@
 'use client';
 import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
-import { User, Workspaces } from '@/lib/supabase/supabase.types';
+import { User, workspace } from '@/lib/supabase/supabase.types';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { Label } from '../ui/label';
@@ -20,7 +20,7 @@ import { addCollaborators, createWorkspace } from '@/lib/supabase/queries';
 import CollaboratorSearch from './collaborator-search';
 import { ScrollArea } from '../ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { useToast } from '@/hooks//use-toast';
+import { useToast } from '../ui/use-toast';
 
 const WorkspaceCreator = () => {
   const { user } = useSupabaseUser();
@@ -39,11 +39,11 @@ const WorkspaceCreator = () => {
     setCollaborators(collaborators.filter((c) => c.id !== user.id));
   };
 
-  const createItem = async () => {                    // function triggered when create will be clicked. if shared then add collaborators
+  const createItem = async () => {
     setIsLoading(true);
     const uuid = v4();
     if (user?.id) {
-      const newWorkspace: Workspaces = {
+      const newWorkspace: workspace = {
         data: null,
         createdAt: new Date().toISOString(),
         iconId: '💼',
@@ -55,12 +55,12 @@ const WorkspaceCreator = () => {
         bannerUrl: '',
       };
       if (permissions === 'private') {
-        toast({ title: 'Success', description: 'Created the Workspaces' });
+        toast({ title: 'Success', description: 'Created the workspace' });
         await createWorkspace(newWorkspace);
         router.refresh();
       }
       if (permissions === 'shared') {
-        toast({ title: 'Success', description: 'Created the Workspaces' });
+        toast({ title: 'Success', description: 'Created the workspace' });
         await createWorkspace(newWorkspace);
         await addCollaborators(collaborators, uuid);
         router.refresh();
@@ -85,7 +85,7 @@ const WorkspaceCreator = () => {
         gap-2
         "
         >
-          <Input              // input field for workspace name
+          <Input
             name="name"
             value={title}
             placeholder="Workspace Name"
@@ -95,8 +95,8 @@ const WorkspaceCreator = () => {
           />
         </div>
       </div>
-      <> 
-        <Label                // label for permissions
+      <>
+        <Label
           htmlFor="permissions"
           className="text-sm
           text-muted-foreground"
@@ -127,7 +127,7 @@ const WorkspaceCreator = () => {
                   <article className="text-left flex flex-col">
                     <span>Private</span>
                     <p>
-                      Your Workspaces is private to you. You can choose to share
+                      Your workspace is private to you. You can choose to share
                       it later.
                     </p>
                   </article>

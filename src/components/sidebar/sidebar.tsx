@@ -11,14 +11,12 @@ import {
 } from '@/lib/supabase/queries';
 import { redirect } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
-import WorkspaceDropdown from './workspace_dropdown';
+import WorkspaceDropdown from './workspace-dropdown';
 import PlanUsage from './plan-usage';
 import NativeNavigation from './native-navigation';
 import { ScrollArea } from '../ui/scroll-area';
-import FoldersDropdownList from './folder-dropdown-list';
+import FoldersDropdownList from './folders-dropdown-list';
 import UserCard from './user-card';
-import { workspace } from '@/lib/supabase/schema';
-import { userAgent } from 'next/server';
 
 interface SidebarProps {
   params: { workspaceId: string };
@@ -45,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
   //error
   if (subscriptionError || foldersError) redirect('/dashboard');
 
-  const [privateWorkspaces, collaboratingWorkspaces, sharedWorkspaces] =            // get all the different workspaces private collaborating shared
+  const [privateWorkspaces, collaboratingWorkspaces, sharedWorkspaces] =
     await Promise.all([
       getPrivateWorkspaces(user.id),
       getCollaboratingWorkspaces(user.id),
@@ -61,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
       )}
     >
       <div>
-        <WorkspaceDropdown                                // side bar dropdown for each type of workspace
+        <WorkspaceDropdown
           privateWorkspaces={privateWorkspaces}
           sharedWorkspaces={sharedWorkspaces}
           collaboratingWorkspaces={collaboratingWorkspaces}
@@ -71,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
             ...sharedWorkspaces,
           ].find((workspace) => workspace.id === params.workspaceId)}
         />
-        <PlanUsage                                                // it will only show the plan usage if the user has a subscription or free user will only have 3 workspaces
+        <PlanUsage
           foldersLength={workspaceFolderData?.length || 0}
           subscription={subscriptionData}
         />
@@ -104,37 +102,3 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
 };
 
 export default Sidebar;
-
-
-
-
-
-
-
-
-
-
-
-    //FIRST CHECK IF THERE IS A USER
-    // THEN CHECK SUBSCRIPTION STATUS
-    // CHECK IF FOLDERS EXIST, WE WANT TO SHOW THE FOLDERS IN SIDEBAR
-    //CHECK FOR ERRORS, IF YES THEN REDIRECT TO DASHBOARD
-    // GET ALL THE DIFFERENT WORKSPACES (PRIVATE AND SHARED)
-    // 
-
-
-
-
-
-
-
-
-// workspace
-
-// sidebar :
-
-//   plan usage  
-//   native navigation
-//   scroll area
-//   folder dropdown list
-  

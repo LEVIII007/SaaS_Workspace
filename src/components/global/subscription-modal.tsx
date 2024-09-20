@@ -1,5 +1,5 @@
 'use client';
-import { useSubscriptionModal } from '@/lib/providers/subscription-model-provider';
+import { useSubscriptionModal } from '@/lib/providers/subscription-modal-provider';
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -13,8 +13,8 @@ import { formatPrice, postData } from '@/lib/utils';
 import { Button } from '../ui/button';
 import Loader from './Loader';
 import { Price, ProductWirhPrice } from '@/lib/supabase/supabase.types';
-import { useToast } from '@/hooks/use-toast';
-// import { getStripe } from '@/lib/stripe/stripeClient';
+import { useToast } from '../ui/use-toast';
+import { getStripe } from '@/lib/stripe/stripeClient';
 
 interface SubscriptionModalProps {
   products: ProductWirhPrice[];
@@ -46,8 +46,8 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ products }) => {
       });
 
       console.log('Getting Checkout for stripe');
-    //   const stripe = await getStripe();
-    //   stripe?.redirectToCheckout({ sessionId });
+      const stripe = await getStripe();
+      stripe?.redirectToCheckout({ sessionId });
     } catch (error) {
       toast({ title: 'Oppse! Something went wrong.', variant: 'destructive' });
     } finally {
