@@ -31,7 +31,7 @@ export const getUserSubscriptionStatus = async (userId: string) => {
     else return { data: null, error: null };
   } catch (error) {
     console.log(error);
-    return { data: null, error: Error };
+    return { data: null, error: `Error` };
   }
 };
 
@@ -212,82 +212,37 @@ export const getFiles = async (folderId: string) => {
   }
 };
 
-// export const addCollaborators = async (users: User[], workspaceId: string) => {
-//   const response = users.forEach(async (user: User) => {
-//     const userExists = await db.query.collaborators.findFirst({
-//       where: (u, { eq }) =>
-//         and(eq(u.userId, user.id), eq(u.workspaceId, workspaceId)),
-//     });
-//     if (!userExists)
-//       await db.insert(collaborators).values({ workspaceId, userId: user.id });
-//   });
-// };
 export const addCollaborators = async (users: User[], workspaceId: string) => {
-  try {
-    await Promise.all(
-      users.map(async (user: User) => {
-        const userExists = await db.query.collaborators.findFirst({
-          where: (u, { eq }) =>
-            and(eq(u.userId, user.id), eq(u.workspaceId, workspaceId)),
-        });
-
-        if (!userExists) {
-          await db.insert(collaborators).values({ workspaceId, userId: user.id });
-        }
-      })
-    );
-  } catch (error) {
-    console.error('Error adding collaborators:', error);
-  }
+  const response = users.forEach(async (user: User) => {
+    const userExists = await db.query.collaborators.findFirst({
+      where: (u, { eq }) =>
+        and(eq(u.userId, user.id), eq(u.workspaceId, workspaceId)),
+    });
+    if (!userExists)
+      await db.insert(collaborators).values({ workspaceId, userId: user.id });
+  });
 };
 
-export const removeCollaborators = async (users: User[], workspaceId: string) => {
-  try {
-    await Promise.all(
-      users.map(async (user: User) => {
-        const userExists = await db.query.collaborators.findFirst({
-          where: (u, { eq }) =>
-            and(eq(u.userId, user.id), eq(u.workspaceId, workspaceId)),
-        });
-
-        if (userExists) {
-          await db
-            .delete(collaborators)
-            .where(
-              and(
-                eq(collaborators.workspaceId, workspaceId),
-                eq(collaborators.userId, user.id)
-              )
-            );
-        }
-      })
-    );
-  } catch (error) {
-    console.error('Error removing collaborators:', error);
-  }
+export const removeCollaborators = async (
+  users: User[],
+  workspaceId: string
+) => {
+  const response = users.forEach(async (user: User) => {
+    const userExists = await db.query.collaborators.findFirst({
+      where: (u, { eq }) =>
+        and(eq(u.userId, user.id), eq(u.workspaceId, workspaceId)),
+    });
+    if (userExists)
+      await db
+        .delete(collaborators)
+        .where(
+          and(
+            eq(collaborators.workspaceId, workspaceId),
+            eq(collaborators.userId, user.id)
+          )
+        );
+  });
 };
-
-
-// export const removeCollaborators = async (
-//   users: User[],
-//   workspaceId: string
-// ) => {
-//   const response = users.forEach(async (user: User) => {
-//     const userExists = await db.query.collaborators.findFirst({
-//       where: (u, { eq }) =>
-//         and(eq(u.userId, user.id), eq(u.workspaceId, workspaceId)),
-//     });
-//     if (userExists)
-//       await db
-//         .delete(collaborators)
-//         .where(
-//           and(
-//             eq(collaborators.workspaceId, workspaceId),
-//             eq(collaborators.userId, user.id)
-//           )
-//         );
-//   });
-// };
 
 export const findUser = async (userId: string) => {
   const response = await db.query.users.findFirst({
@@ -396,11 +351,11 @@ export const getCollaborators = async (workspaceId: string) => {
   return resolvedUsers.filter(Boolean) as User[];
 };
 
-// export const getUsersFromSearch = async (email: string) => {
-//   if (!email) return [];
-//   const accounts = db
-//     .select()
-//     .from(users)
-//     .where(ilike(users.email, ${email}%));
-//   return accounts;
-// };
+export const getUsersFromSearch = async (email: string) => {
+  if (!email) return [];
+  const accounts = db
+    .select()
+    .from(users)
+    .where(ilike(users.email, `${email}%`));
+  return accounts;
+};

@@ -124,15 +124,54 @@ export const subscriptions = pgTable('subscriptions', {
 
 export const collaborators = pgTable('collaborators', {
   id: uuid('id').defaultRandom().primaryKey().notNull(),
-  workspaceId: uuid('workspace_id').notNull().references(() => workspaces.id, { onDelete: 'cascade' }),
+  workspaceId: uuid('workspace_id')
+    .notNull()
+    .references(() => workspaces.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at', {
     withTimezone: true,
     mode: 'string',
   })
-    .defaultNow().notNull(),userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    .defaultNow()
+    .notNull(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
 });
 
-// Dont Delete!!!
+
+// New Chat Table
+export const chats = pgTable('chats', {
+  id: uuid('id').defaultRandom().primaryKey().notNull(),
+  workspaceId: uuid('workspace_id')
+    .notNull()
+    .references(() => workspaces.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at', {
+    withTimezone: true,
+    mode: 'string',
+  })
+    .defaultNow()
+    .notNull(),
+});
+
+// New Message Table
+export const messages = pgTable('messages', {
+  id: uuid('id').defaultRandom().primaryKey().notNull(),
+  chatId: uuid('chat_id')
+    .notNull()
+    .references(() => chats.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at', {
+    withTimezone: true,
+    mode: 'string',
+  })
+    .defaultNow()
+    .notNull(),
+});
+
+//Dont Delete!!!
 export const productsRelations = relations(products, ({ many }) => ({
   prices: many(prices),
 }));

@@ -5,7 +5,7 @@ import { Subscription } from '../supabase/supabase.types';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { getUserSubscriptionStatus } from '../supabase/queries';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 type SupabaseUserContextType = {
   user: AuthUser | null;
@@ -21,7 +21,7 @@ export const useSupabaseUser = () => {
   return useContext(SupabaseUserContext);
 };
 
-interface SupabaseUserProviderProps {                     // this is the provider for the user
+interface SupabaseUserProviderProps {
   children: React.ReactNode;
 }
 
@@ -34,29 +34,37 @@ export const SupabaseUserProvider: React.FC<SupabaseUserProviderProps> = ({
 
   const supabase = createClientComponentClient();
 
-  //Fetch the user details
-  //subscription details
+  // Fetch the user details
   useEffect(() => {
     const getUser = async () => {
+      console.log('Fetching user...');
       const {
         data: { user },
       } = await supabase.auth.getUser();
       if (user) {
-        console.log(user);
+        console.log('User fetched:', user);
         setUser(user);
+        console.log('Fetching subscription status for user ID:', user.id);
         const { data, error } = await getUserSubscriptionStatus(user.id);
-        if (data) setSubscription(data);
+        if (data) {
+          console.log('Subscription data fetched:', data);
+          setSubscription(data);
+        }
         if (error) {
+          console.error('Error fetching subscription status:', error);
           toast({
             title: 'Unexpected Error',
             description:
-              'Oppse! An unexpected error happened. Try again later.',
+              'Oops! An unexpected error happened. Try again later.',
           });
         }
+      } else {
+        console.log('No user found.');
       }
     };
     getUser();
   }, [supabase, toast]);
+
   return (
     <SupabaseUserContext.Provider value={{ user, subscription }}>
       {children}

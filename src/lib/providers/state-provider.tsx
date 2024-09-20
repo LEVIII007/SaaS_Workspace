@@ -8,16 +8,16 @@ import React, {
   useMemo,
   useReducer,
 } from 'react';
-import { File, Folder, Workspaces } from '../supabase/supabase.types';
+import { File, Folder, workspace } from '../supabase/supabase.types';
 import { usePathname } from 'next/navigation';
 import { getFiles } from '../supabase/queries';
 
 export type appFoldersType = Folder & { files: File[] | [] };
-export type appWorkspacesType = Workspaces & {
+export type appWorkspacesType = workspace & {
   folders: appFoldersType[] | [];
 };
 
-export interface AppState {
+interface AppState {
   workspaces: appWorkspacesType[] | [];
 }
 
@@ -26,7 +26,7 @@ type Action =
   | { type: 'DELETE_WORKSPACE'; payload: string }
   | {
       type: 'UPDATE_WORKSPACE';
-      payload: { Workspaces: Partial<appWorkspacesType>; workspaceId: string };
+      payload: { workspace: Partial<appWorkspacesType>; workspaceId: string };
     }
   | {
       type: 'SET_WORKSPACES';
@@ -90,20 +90,20 @@ const appReducer = (
       return {
         ...state,
         workspaces: state.workspaces.filter(
-          (Workspaces) => Workspaces.id !== action.payload
+          (workspace) => workspace.id !== action.payload
         ),
       };
     case 'UPDATE_WORKSPACE':
       return {
         ...state,
-        workspaces: state.workspaces.map((Workspaces) => {
-          if (Workspaces.id === action.payload.workspaceId) {
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
             return {
-              ...Workspaces,
-              ...action.payload.Workspaces,
+              ...workspace,
+              ...action.payload.workspace,
             };
           }
-          return Workspaces;
+          return workspace;
         }),
       };
     case 'SET_WORKSPACES':
@@ -114,10 +114,10 @@ const appReducer = (
     case 'SET_FOLDERS':
       return {
         ...state,
-        workspaces: state.workspaces.map((Workspaces) => {
-          if (Workspaces.id === action.payload.workspaceId) {
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
             return {
-              ...Workspaces,
+              ...workspace,
               folders: action.payload.folders.sort(
                 (a, b) =>
                   new Date(a.createdAt).getTime() -
@@ -125,16 +125,16 @@ const appReducer = (
               ),
             };
           }
-          return Workspaces;
+          return workspace;
         }),
       };
     case 'ADD_FOLDER':
       return {
         ...state,
-        workspaces: state.workspaces.map((Workspaces) => {
+        workspaces: state.workspaces.map((workspace) => {
           return {
-            ...Workspaces,
-            folders: [...Workspaces.folders, action.payload.folder].sort(
+            ...workspace,
+            folders: [...workspace.folders, action.payload.folder].sort(
               (a, b) =>
                 new Date(a.createdAt).getTime() -
                 new Date(b.createdAt).getTime()
@@ -145,11 +145,11 @@ const appReducer = (
     case 'UPDATE_FOLDER':
       return {
         ...state,
-        workspaces: state.workspaces.map((Workspaces) => {
-          if (Workspaces.id === action.payload.workspaceId) {
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
             return {
-              ...Workspaces,
-              folders: Workspaces.folders.map((folder) => {
+              ...workspace,
+              folders: workspace.folders.map((folder) => {
                 if (folder.id === action.payload.folderId) {
                   return { ...folder, ...action.payload.folder };
                 }
@@ -157,32 +157,32 @@ const appReducer = (
               }),
             };
           }
-          return Workspaces;
+          return workspace;
         }),
       };
     case 'DELETE_FOLDER':
       return {
         ...state,
-        workspaces: state.workspaces.map((Workspaces) => {
-          if (Workspaces.id === action.payload.workspaceId) {
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
             return {
-              ...Workspaces,
-              folders: Workspaces.folders.filter(
+              ...workspace,
+              folders: workspace.folders.filter(
                 (folder) => folder.id !== action.payload.folderId
               ),
             };
           }
-          return Workspaces;
+          return workspace;
         }),
       };
     case 'SET_FILES':
       return {
         ...state,
-        workspaces: state.workspaces.map((Workspaces) => {
-          if (Workspaces.id === action.payload.workspaceId) {
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
             return {
-              ...Workspaces,
-              folders: Workspaces.folders.map((folder) => {
+              ...workspace,
+              folders: workspace.folders.map((folder) => {
                 if (folder.id === action.payload.folderId) {
                   return {
                     ...folder,
@@ -193,17 +193,17 @@ const appReducer = (
               }),
             };
           }
-          return Workspaces;
+          return workspace;
         }),
       };
     case 'ADD_FILE':
       return {
         ...state,
-        workspaces: state.workspaces.map((Workspaces) => {
-          if (Workspaces.id === action.payload.workspaceId) {
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
             return {
-              ...Workspaces,
-              folders: Workspaces.folders.map((folder) => {
+              ...workspace,
+              folders: workspace.folders.map((folder) => {
                 if (folder.id === action.payload.folderId) {
                   return {
                     ...folder,
@@ -218,17 +218,17 @@ const appReducer = (
               }),
             };
           }
-          return Workspaces;
+          return workspace;
         }),
       };
     case 'DELETE_FILE':
       return {
         ...state,
-        workspaces: state.workspaces.map((Workspaces) => {
-          if (Workspaces.id === action.payload.workspaceId) {
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
             return {
-              ...Workspaces,
-              folder: Workspaces.folders.map((folder) => {
+              ...workspace,
+              folder: workspace.folders.map((folder) => {
                 if (folder.id === action.payload.folderId) {
                   return {
                     ...folder,
@@ -241,17 +241,17 @@ const appReducer = (
               }),
             };
           }
-          return Workspaces;
+          return workspace;
         }),
       };
     case 'UPDATE_FILE':
       return {
         ...state,
-        workspaces: state.workspaces.map((Workspaces) => {
-          if (Workspaces.id === action.payload.workspaceId) {
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
             return {
-              ...Workspaces,
-              folders: Workspaces.folders.map((folder) => {
+              ...workspace,
+              folders: workspace.folders.map((folder) => {
                 if (folder.id === action.payload.folderId) {
                   return {
                     ...folder,
@@ -270,7 +270,7 @@ const appReducer = (
               }),
             };
           }
-          return Workspaces;
+          return workspace;
         }),
       };
     default:
