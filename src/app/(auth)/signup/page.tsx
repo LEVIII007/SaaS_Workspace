@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '../../../components/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -7,9 +7,8 @@ import {
   FormField,
   FormItem,
   FormMessage,
-} from '../../../components/ui/form';
-
-import { Input } from '../../../components/ui/input';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import clsx from 'clsx';
 import Image from 'next/image';
@@ -19,13 +18,12 @@ import React, { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-// import Logo from '../../../../public/cypresslogo.svg';
-import Loader from '../../../components/global/Loader';
-import { Alert, AlertDescription, AlertTitle } from '../../../components/ui/alert';
+import Logo from '../../../../public/cypresslogo.svg';
+import Loader from '@/components/global/Loader';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { MailCheck } from 'lucide-react';
-import { FormSchema } from '../../../lib/types';
-import { actionSignUpUser } from '../../../lib/server-actions/auth-actions';
-
+import { FormSchema } from '@/lib/types';
+import { actionSignUpUser } from '@/lib/server-actions/auth-actions';
 
 const SignUpFormSchema = z
   .object({
@@ -43,16 +41,6 @@ const SignUpFormSchema = z
     message: "Passwords don't match.",
     path: ['confirmPassword'],
   });
-
-//   Adds a custom validation rule to the schema.
-//   (data) => data.password === data.confirmPassword:
-  
-//   This is the custom validation function.
-//   It checks if the password and confirmPassword fields match.
-//   { message: "Passwords don't match.", path: ['confirmPassword'] }:
-  
-//   If the validation fails (i.e., the passwords do not match), the error message "Passwords don't match." will be shown.
-//   The error will be associated with the confirmPassword field.
 
 const Signup = () => {
   const router = useRouter();
@@ -82,7 +70,6 @@ const Signup = () => {
   });
 
   const isLoading = form.formState.isSubmitting;
-
   const onSubmit = async ({ email, password }: z.infer<typeof FormSchema>) => {
     const { error } = await actionSignUpUser({ email, password });
     if (error) {
@@ -113,12 +100,12 @@ const Signup = () => {
           justify-left
           items-center"
         >
-          {/* <Image
+          <Image
             src={Logo}
             alt="cypress Logo"
             width={50}
             height={50}
-          /> */}
+          />
           <span
             className="font-semibold
           dark:text-white text-4xl first-letter:ml-2"
@@ -224,5 +211,3 @@ const Signup = () => {
 };
 
 export default Signup;
-
-  

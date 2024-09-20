@@ -26,13 +26,13 @@ const LoginPage = () => {
   const router = useRouter();
   const [submitError, setSubmitError] = useState('');
 
-  const form = useForm<z.infer<typeof FormSchema>>({          // form schema for validation
+  const form = useForm<z.infer<typeof FormSchema>>({
     mode: 'onChange',
     resolver: zodResolver(FormSchema),
     defaultValues: { email: '', password: '' },
   });
 
-  const isLoading = form.formState.isSubmitting;           // comes from form itself       
+  const isLoading = form.formState.isSubmitting;
 
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (
     formData
@@ -126,7 +126,7 @@ const LoginPage = () => {
         </Button>
         <span className="self-container">
           Dont have an account?{' '}
-          <Link                                                      // i could also use router.replace or push here to navigate
+          <Link
             href="/signup"
             className="text-primary"
           >

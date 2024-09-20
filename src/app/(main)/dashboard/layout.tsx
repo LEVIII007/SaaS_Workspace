@@ -1,5 +1,6 @@
-import { SubscriptionModalProvider } from '@/lib/providers/subscription-model-provider';
+import { SubscriptionModalProvider } from '@/lib/providers/subscription-modal-provider';
 import { getActiveProductsWithPrice } from '@/lib/supabase/queries';
+import ChatRoom from "@/components/chat-support/chat-support";
 import React from 'react';
 
 interface LayoutProps {

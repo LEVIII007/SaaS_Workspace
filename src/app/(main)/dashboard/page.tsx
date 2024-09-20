@@ -8,7 +8,7 @@ import DashboardSetup from '@/components/dashboard-setup/dashboard-setup';
 import { getUserSubscriptionStatus } from '@/lib/supabase/queries';
 
 const DashboardPage = async () => {
-  const supabase = createServerComponentClient({ cookies });          
+  const supabase = createServerComponentClient({ cookies });
 
   const {
     data: { user },
@@ -16,7 +16,7 @@ const DashboardPage = async () => {
 
   if (!user) return;
 
-  const workspace = await db.query.workspace.findFirst({                     // drizzle query to find a workspace with user id
+  const workspace = await db.query.workspaces.findFirst({
     where: (workspace, { eq }) => eq(workspace.workspaceOwner, user.id),
   });
 
@@ -25,7 +25,7 @@ const DashboardPage = async () => {
 
   if (subscriptionError) return;
 
-  if (!workspace)                   // if workspace does not exist, then show the dashboard setup page where user can create a workspace
+  if (!workspace)
     return (
       <div
         className="bg-background
