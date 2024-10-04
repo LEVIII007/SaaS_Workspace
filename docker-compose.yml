@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  app-prod:
+    build:
+      context: .
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env  # Use the same .env file for production
+
+  app-dev:
+    build:
+      context: .
+      target: deps
+    command: npm run dev
+    ports:
+      - '3001:3000'
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    env_file:
+      - .env  # Use the same .env file for development
