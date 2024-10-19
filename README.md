@@ -55,7 +55,18 @@
 
 ## 📍 Overview
 
-The SaaS_Workspace.git project is a sophisticated software solution that aims to streamline communication and enhance user engagement within a SaaS platform. The core functionalities of the project include efficient server actions enabled by the `next.config.mjs` file, optimized CSS styling and layout consistency through the `postcss.config.js`, dynamic email content generation powered by the `package-lock.json` file containing the `emailTemplate.html`, and seamless integration and functioning of software components orchestrated by the `emailTemplate.html` and `components.json` files. By combining these elements, the SaaS_Workspace.git project provides a seamless and personalized user experience, ensuring efficient communication, collaboration, and operation within the software environment. The projects value proposition lies in its ability to optimize user engagement, enhance communication, and facilitate cohesive operation within SaaS applications, making it a valuable asset for organizations seeking to maximize the effectiveness of their software platforms.
+### Realtime Collaborative Workspace
+Tech Stack: Next.js 13, Drizzle ORM, Supabase, Tailwind, WebSockets, Redis, Docker
+Duration: Aug 2024 – Oct 2024
+
+This project is a Realtime Collaborative Workspace designed to enhance team collaboration by allowing multiple users to work simultaneously. Key features include:
+
+#### Real-Time Collaboration: Users can see real-time cursors, text selection, and presence indicators, significantly improving team interaction and productivity.
+#### Enhanced Security: Implemented custom email-based two-factor authentication (2FA) and integrated payment management for secure account access.
+#### Optimistic UI Updates: Leveraged WebSockets to deliver real-time collaboration experiences and multiple cursor visibility, ensuring a smooth user interface.
+#### Integrated Chat: Provided a real-time chat feature for collaborators using Redis and WebSockets, facilitating seamless communication within the shared workspace.
+#### Optimized Deployment: Dockerized the application with a multi-stage build, ensuring efficient deployment and resource management.
+This project demonstrates a robust approach to building collaborative applications that prioritize user experience and security while leveraging modern web technologies.
 
 ---
 
