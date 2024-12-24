@@ -56,7 +56,7 @@ import CypressProfileIcon from '../icons/cypressProfileIcon';
 import LogoutButton from '../global/logout-button';
 import Link from 'next/link';
 // import { useSubscriptionModal } from '@/lib/providers/subscription-modal-provider';
-import { postData } from '@/lib/utils';
+// import { postData } from '@/lib/utils';
 
 const SettingsForm = () => {
   const { toast } = useToast();

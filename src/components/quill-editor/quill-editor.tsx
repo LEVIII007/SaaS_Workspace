@@ -167,25 +167,29 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   }, [state, pathname, workspaceId]);
 
   //
-  const wrapperRef = useCallback(async (wrapper: any) => {
+  const wrapperRef = useCallback((wrapper: any) => {
     if (typeof window !== 'undefined') {
       if (wrapper === null) return;
       wrapper.innerHTML = '';
       const editor = document.createElement('div');
       wrapper.append(editor);
-      const Quill = (await import('quill')).default;
-      const QuillCursors = (await import('quill-cursors')).default;
-      Quill.register('modules/cursors', QuillCursors);
-      const q = new Quill(editor, {
-        theme: 'snow',
-        modules: {
-          toolbar: TOOLBAR_OPTIONS,
-          cursors: {
-            transformOnTextChange: true,
-          },
-        },
+      import('quill').then((QuillModule) => {
+        const Quill = QuillModule.default;
+        import('quill-cursors').then((QuillCursorsModule) => {
+          const QuillCursors = QuillCursorsModule.default;
+          Quill.register('modules/cursors', QuillCursors);
+          const q = new Quill(editor, {
+            theme: 'snow',
+            modules: {
+              toolbar: TOOLBAR_OPTIONS,
+              cursors: {
+                transformOnTextChange: true,
+              },
+            },
+          });
+          setQuill(q);
+        });
       });
-      setQuill(q);
     }
   }, []);
 
@@ -759,6 +763,11 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
             {dirType.toUpperCase()}
           </span>
         </div>
+        <div
+          id="container"
+          className="max-w-[800px]"
+          ref={wrapperRef}
+        ></div>
       </div>
     </>
   );
