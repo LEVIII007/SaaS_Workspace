@@ -759,11 +759,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
             {dirType.toUpperCase()}
           </span>
         </div>
-        <div
-          id="container"
-          className="max-w-[800px]"
-          ref={wrapperRef}
-        ></div>
       </div>
     </>
   );

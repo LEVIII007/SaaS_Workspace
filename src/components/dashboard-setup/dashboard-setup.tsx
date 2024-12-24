@@ -14,7 +14,7 @@ import {
 import EmojiPicker from '../global/emoji-picker';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
-import { Subscription, workspace } from '@/lib/supabase/supabase.types';
+import { workspace } from '@/lib/supabase/supabase.types';
 import { Button } from '../ui/button';
 import Loader from '../global/Loader';
 import { createWorkspace } from '@/lib/supabase/queries';
@@ -27,11 +27,9 @@ import { z } from 'zod';
 
 interface DashboardSetupProps {
   user: AuthUser;
-  subscription: Subscription | null;
 }
 
 const DashboardSetup: React.FC<DashboardSetupProps> = ({
-  subscription,
   user,
 }) => {
   const { toast } = useToast();
@@ -182,7 +180,6 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
                 type="file"
                 accept="image/*"
                 placeholder="Workspace Name"
-                // disabled={isLoading || subscription?.status !== 'active'}
                 {...register('logo', {
                   required: false,
                 })}
@@ -190,16 +187,6 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
               <small className="text-red-600">
                 {errors?.logo?.message?.toString()}
               </small>
-              {subscription?.status !== 'active' && (
-                <small
-                  className="
-                  text-muted-foreground
-                  block
-              "
-                >
-                  To customize your workspace, you need to be on a Pro Plan
-                </small>
-              )}
             </div>
             <div className="self-end">
               <Button

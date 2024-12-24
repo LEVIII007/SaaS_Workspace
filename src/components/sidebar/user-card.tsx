@@ -1,5 +1,4 @@
 import React from 'react';
-import { Subscription } from '@/lib/supabase/supabase.types';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import db from '@/lib/supabase/db';
@@ -9,11 +8,9 @@ import ModeToggle from '../global/mode-toggle';
 import { LogOut } from 'lucide-react';
 import LogoutButton from '../global/logout-button';
 
-interface UserCardProps {
-  subscription: Subscription | null;
-}
 
-const UserCard: React.FC<UserCardProps> = async ({ subscription }) => {
+
+const UserCard: React.FC = async () => {
   const supabase = createServerComponentClient({ cookies });
   const {
     data: { user },
@@ -56,9 +53,6 @@ const UserCard: React.FC<UserCardProps> = async ({ subscription }) => {
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
-          <span className="text-muted-foreground">
-            {subscription?.status === 'active' ? 'Pro Plan' : 'Free Plan'}
-          </span>
           <small
             className="w-[100px] 
           overflow-hidden 

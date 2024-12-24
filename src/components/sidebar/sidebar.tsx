@@ -7,12 +7,10 @@ import {
   getFolders,
   getPrivateWorkspaces,
   getSharedWorkspaces,
-  getUserSubscriptionStatus,
 } from '@/lib/supabase/queries';
 import { redirect } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 import WorkspaceDropdown from './workspace-dropdown';
-import PlanUsage from './plan-usage';
 import NativeNavigation from './native-navigation';
 import { ScrollArea } from '../ui/scroll-area';
 import FoldersDropdownList from './folders-dropdown-list';
@@ -32,16 +30,12 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
 
   if (!user) return;
 
-  //subscr
-  const { data: subscriptionData, error: subscriptionError } =
-    await getUserSubscriptionStatus(user.id);
-
   //folders
   const { data: workspaceFolderData, error: foldersError } = await getFolders(
     params.workspaceId
   );
   //error
-  if (subscriptionError || foldersError) redirect('/dashboard');
+  if (foldersError) redirect('/dashboard');
 
   const [privateWorkspaces, collaboratingWorkspaces, sharedWorkspaces] =
     await Promise.all([
@@ -69,10 +63,6 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
             ...sharedWorkspaces,
           ].find((workspace) => workspace.id === params.workspaceId)}
         />
-        <PlanUsage
-          foldersLength={workspaceFolderData?.length || 0}
-          subscription={subscriptionData}
-        />
         <NativeNavigation myWorkspaceId={params.workspaceId} />
         <ScrollArea
           className="overflow-scroll relative
@@ -96,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
           />
         </ScrollArea>
       </div>
-      <UserCard subscription={subscriptionData} />
+      <UserCard/>
     </aside>
   );
 };

@@ -55,13 +55,13 @@ import { Alert, AlertDescription } from '../ui/alert';
 import CypressProfileIcon from '../icons/cypressProfileIcon';
 import LogoutButton from '../global/logout-button';
 import Link from 'next/link';
-import { useSubscriptionModal } from '@/lib/providers/subscription-modal-provider';
+// import { useSubscriptionModal } from '@/lib/providers/subscription-modal-provider';
 import { postData } from '@/lib/utils';
 
 const SettingsForm = () => {
   const { toast } = useToast();
-  const { user, subscription } = useSupabaseUser();
-  const { open, setOpen } = useSubscriptionModal();
+  const { user } = useSupabaseUser();
+  // const { open, setOpen } = useSubscriptionModal();
   const router = useRouter();
   const supabase = createClientComponentClient();
   const { state, workspaceId, dispatch } = useAppState();
@@ -76,24 +76,27 @@ const SettingsForm = () => {
 
   //WIP PAYMENT PORTAL
 
-  const redirectToCustomerPortal = async () => {
-    setLoadingPortal(true);
-    try {
-      const { url, error } = await postData({
-        url: '/api/create-portal-link',
-      });
-      window.location.assign(url);
-    } catch (error) {
-      console.log(error);
-      setLoadingPortal(false);
-    }
-    setLoadingPortal(false);
-  };
+  // const redirectToCustomerPortal = async () => {
+  //   setLoadingPortal(true);
+  //   try {
+  //     const { url, error } = await postData({
+  //       url: '/api/create-portal-link',
+  //     });
+  //     window.location.assign(url);
+  //   } catch (error) {
+  //     console.log(error);
+  //     setLoadingPortal(false);
+  //   }
+  //   setLoadingPortal(false);
+  // };
   //addcollborators
   const addCollaborator = async (profile: User) => {
     if (!workspaceId) return;
-    if (subscription?.status !== 'active' && collaborators.length >= 2) {
-      setOpen(true);
+    if (collaborators.length >= 3) {
+      toast({
+        variant: 'destructive',
+        title: 'You have reached the maximum number of collaborators',
+      });
       return;
     }
     await addCollaborators([profile], workspaceId);
@@ -220,13 +223,8 @@ const SettingsForm = () => {
           accept="image/*"
           placeholder="Workspace Logo"
           onChange={onChangeWorkspaceLogo}
-          disabled={uploadingLogo || subscription?.status !== 'active'}
+          disabled={uploadingLogo}
         />
-        {subscription?.status !== 'active' && (
-          <small className="text-muted-foreground">
-            To customize your workspace, you need to be on a Pro Plan
-          </small>
-        )}
       </div>
       <>
         <Label htmlFor="permissions">Permissions</Label>
@@ -416,14 +414,10 @@ const SettingsForm = () => {
             <LogOut />
           </div>
         </LogoutButton>
-        <p className="flex items-center gap-2 mt-6">
+        {/* <p className="flex items-center gap-2 mt-6">
           <CreditCard size={20} /> Billing & Plan
-        </p>
+        </p> */}
         <Separator />
-        <p className="text-muted-foreground">
-          You are currently on a{' '}
-          {subscription?.status === 'active' ? 'Pro' : 'Free'} Plan
-        </p>
         <Link
           href="/"
           target="_blank"
@@ -431,7 +425,7 @@ const SettingsForm = () => {
         >
           View Plans <ExternalLink size={16} />
         </Link>
-        {subscription?.status === 'active' ? (
+        {/* {subscription?.status === 'active' ? (
           <div>
             <Button
               type="button"
@@ -456,7 +450,7 @@ const SettingsForm = () => {
               Start Plan
             </Button>
           </div>
-        )}
+        )} */}
       </>
       <AlertDialog open={openAlertMessage}>
         <AlertDialogContent>

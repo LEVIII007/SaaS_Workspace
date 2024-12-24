@@ -1,12 +1,8 @@
 import { InferSelectModel } from 'drizzle-orm';
 import {
-  customers,
-  folders,
-  prices,
-  products,
-  subscriptions,
   users,
   workspaces,
+  folders,
 } from '../../../migrations/schema';
 import { files } from './schema';
 
@@ -246,79 +242,6 @@ export interface Database {
         };
         Relationships: [];
       };
-      subscriptions: {
-        Row: {
-          cancel_at: string | null;
-          cancel_at_period_end: boolean | null;
-          canceled_at: string | null;
-          created: string;
-          current_period_end: string;
-          current_period_start: string;
-          ended_at: string | null;
-          id: string;
-          metadata: Json | null;
-          price_id: string | null;
-          quantity: number | null;
-          status: Database['public']['Enums']['subscription_status'] | null;
-          trial_end: string | null;
-          trial_start: string | null;
-          user_id: string;
-        };
-        Insert: {
-          cancel_at?: string | null;
-          cancel_at_period_end?: boolean | null;
-          canceled_at?: string | null;
-          created?: string;
-          current_period_end?: string;
-          current_period_start?: string;
-          ended_at?: string | null;
-          id: string;
-          metadata?: Json | null;
-          price_id?: string | null;
-          quantity?: number | null;
-          status?: Database['public']['Enums']['subscription_status'] | null;
-          trial_end?: string | null;
-          trial_start?: string | null;
-          user_id: string;
-        };
-        Update: {
-          cancel_at?: string | null;
-          cancel_at_period_end?: boolean | null;
-          canceled_at?: string | null;
-          created?: string;
-          current_period_end?: string;
-          current_period_start?: string;
-          ended_at?: string | null;
-          id?: string;
-          metadata?: Json | null;
-          price_id?: string | null;
-          quantity?: number | null;
-          status?: Database['public']['Enums']['subscription_status'] | null;
-          trial_end?: string | null;
-          trial_start?: string | null;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'subscriptions_price_id_fkey';
-            columns: ['price_id'];
-            referencedRelation: 'prices';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'subscriptions_price_id_prices_id_fk';
-            columns: ['price_id'];
-            referencedRelation: 'prices';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'subscriptions_user_id_fkey';
-            columns: ['user_id'];
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          }
-        ];
-      };
       users: {
         Row: {
           avatar_url: string | null;
@@ -402,32 +325,14 @@ export interface Database {
     Enums: {
       pricing_plan_interval: 'day' | 'week' | 'month' | 'year';
       pricing_type: 'one_time' | 'recurring';
-      subscription_status:
-        | 'trialing'
-        | 'active'
-        | 'canceled'
-        | 'incomplete'
-        | 'incomplete_expired'
-        | 'past_due'
-        | 'unpaid';
-    };
     CompositeTypes: {
       [_ in never]: never;
     };
   };
 }
+};
 
 export type workspace = InferSelectModel<typeof workspaces>;
 export type User = InferSelectModel<typeof users>;
 export type Folder = InferSelectModel<typeof folders>;
 export type File = InferSelectModel<typeof files>;
-export type Product = InferSelectModel<typeof products>;
-export type Price = InferSelectModel<typeof prices> & { products?: Product };
-export type Customer = InferSelectModel<typeof customers>;
-export type Subscription = InferSelectModel<typeof subscriptions> & {
-  prices: Price;
-};
-
-export type ProductWirhPrice = Product & {
-  prices?: Price[];
-};
