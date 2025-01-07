@@ -37,6 +37,7 @@ import BannerUpload from '../banner-upload/banner-upload';
 import { XCircleIcon } from 'lucide-react';
 import { useSocket } from '@/lib/providers/socket-provider';
 import { useSupabaseUser } from '@/lib/providers/supabase-user-provider';
+import { AIPromptModal } from './ai-promptmodal';
 import { set } from 'zod';
 
 interface QuillEditorProps {
@@ -71,9 +72,12 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   fileId,
 }) => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [prompt, setPrompt] = useState('');
+  // const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedText, setSelectedText] = useState('');
+  const [modalPosition, setModalPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+  const [modalSize, setModalSize] = useState<'sm' | 'xs'>('sm');
   const supabase = createClientComponentClient();
   const { state, workspaceId, folderId, dispatch } = useAppState();
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
@@ -90,36 +94,33 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   const [localCursors, setLocalCursors] = useState<any>([]);
 
   const openPromptModal = useCallback(() => {
-    console.log("open modal");
-    // Code to open the modal (e.g., setModalOpen(true))
-    setModalOpen(true);
+    if (quill) {
+      const range = quill.getSelection();
+      if (range) {
+        const text = quill.getText(range.index, range.length); // Save selected text
+        setSelectedText(text);
+
+        // Get cursor position relative to the Quill editor
+        const bounds = quill.getBounds(range.index);
+        const editorRect = (quill.root as HTMLElement).getBoundingClientRect();
+
+        // Set the position of the modal based on the cursor
+        setModalPosition({
+          top: editorRect.top + bounds.top + 20, // Position slightly below the cursor
+          left: editorRect.left + bounds.left, // Align with the left of the editor
+        });
+      }
+    }
+    setModalOpen(true); // Open the modal
+  }, [quill]);
+
+  // Function to handle modal closing
+  const closePromptModal = useCallback(() => {
+    setModalOpen(false);
+    setSelectedText('');
   }, []);
 
-  const closePromptModal = useCallback(() => {
-    console.log("close modal");
-    // Code to close the modal (e.g., setModalOpen(false))
-    setModalOpen(false);
-    setPrompt('');
-  }
-  , []);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === "i") {
-        e.preventDefault(); // Prevent default browser behavior
-        openPromptModal();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [openPromptModal]);
-
-  const handleGenerate = async () => {
+  const handleGenerate = async (prompt: string) => {
     if (!prompt.trim()) {
       return;
     }
@@ -130,7 +131,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ body : prompt }),
+        body: JSON.stringify({ body: prompt }),
       });
 
       if (!response.ok) {
@@ -140,11 +141,11 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       const { output } = await response.json();
 
       if (quill) {
-        const range = quill.getSelection(); // Get the current cursor position
+        const range = quill.getSelection();
         if (range) {
-          quill.insertText(range.index, output); // Insert the generated text at the cursor
+          quill.insertText(range.index + range.length, output); // Insert after selected text
         } else {
-          quill.insertText(quill.getLength(), output); // If no cursor, append at the end
+          quill.insertText(quill.getLength(), output); // Append if no selection
         }
       }
 
@@ -155,6 +156,21 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'i') {
+        e.preventDefault();
+        openPromptModal();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [openPromptModal]);
 
 
 
@@ -606,44 +622,17 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 
   return (
     <>
-    {isConnected ? "connected" : "disconnected"}
-    {isModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-          onClick={closePromptModal}
-        >
-          <div
-            className="bg-white p-6 rounded-md shadow-lg max-w-md w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-xl font-bold mb-4">AI Prompt</h2>
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="w-full p-2 border rounded-md mb-4"
-              placeholder="Write your prompt here..."
-              disabled={loading}
-            />
-            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-            <div className="flex justify-end gap-4">
-              <button
-                className="bg-gray-300 px-4 py-2 rounded-md"
-                onClick={closePromptModal}
-                disabled={loading}
-              >
-                Close
-              </button>
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                onClick={handleGenerate}
-                disabled={loading}
-              >
-                {loading ? 'Generating...' : 'Submit'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+    {/* {isConnected ? "connected" : "disconnected"} */}
+      <AIPromptModal
+        isOpen={isModalOpen}
+        onClose={closePromptModal}
+        onSubmit={handleGenerate}
+        loading={loading}
+        error={''}
+        selectedText={selectedText}
+        modalPosition={modalPosition}
+      />
+
       <div className="relative">
         {details.inTrash && (
           <article

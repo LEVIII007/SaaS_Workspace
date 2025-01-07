@@ -21,7 +21,8 @@ export async function POST(req : any, res : any) {
         const data = await req.json()
 
         // Define a prompt varibale
-        const prompt = data.body
+        const system = `you are a helpful assitance within a document workspace editor. help the user with their writing according to the context of the document.`
+        const prompt = system + " ->  " + data.body
 
         // Pass the prompt to the model and retrieve the output
         const result = await model.generateContent(prompt)
